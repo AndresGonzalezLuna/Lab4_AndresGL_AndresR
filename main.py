@@ -9,40 +9,24 @@
 # -- --------------------------------------------------------------------------------------------------- -- #
 """
 
-import pandas as pd
-import data as dt
+import asyncio
+import nest_asyncio
+nest_asyncio.apply()
 
-# -- TEST 1 : 
-# verify that the script is being read
-print(dt.dict_test)
+from data import orderbooks_df
 
-# -- TEST 2 :
-# verify that installed pandas module works correctly
-df_dict_test = pd.DataFrame(dt.dict_test, index=[0, 1])
-print(df_dict_test)
+async def get_orderbooks(exchanges, run_time, symbol):
+    #data = await (orderbooks_df(exchanges=exchanges, run_time=run_time, symbol=symbol))
+    data = await (orderbooks_df(exchanges=exchanges))
+    return data
 
-# -- TEST 3 :
-# verify you can use plotly and visualize plots in jupyter notebook
+exchanges = ['bitforex', 'hubipro', 'bitmart']
+#runt_time = 3600
+run_time = 10
 
-import chart_studio.plotly as py   # various tools (jupyter offline print)
-import plotly.graph_objects as go  # plotting engine
+symbol = 'ETH/BTC'
+ETH_BTC = asyncio.run(get_orderbooks(exchanges, run_time, symbol))
+ETH_BTC.to_json('files\orderbooks_23abr2023.json')
 
-# example data
-df = pd.DataFrame({'column_a': [1, 2, 3, 4, 5], 'column_b': [1, 2, 3, 4, 5]})
-# basic plotly plot
-data = [go.Bar(x=df['column_a'], y=df['column_b'])]
-# instruction to view it inside jupyter
-py.iplot(data, filename='jupyter-basic_bar')
-# (alternatively) instruction to view it in web app of plotly
-# py.plot(data)
+print(ETH_BTC.info())
 
-# -- TEST 4 :
-# verify you can use plotly and visualize plots in web browser locally
-
-import plotly.io as pio            # to define input-output of plots
-pio.renderers.default = "browser"  # to render the plot locally in your default web browser
-
-# basic plotly plot
-plot_data = go.Figure(go.Bar(x=df['column_a'], y=df['column_b']))
-# instruction to view it in specified render (in this case browser)
-plot_data.show()
