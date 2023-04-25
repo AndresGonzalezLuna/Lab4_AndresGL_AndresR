@@ -8,3 +8,9 @@
 # -- repository: YOUR REPOSITORY URL                                                                     -- #
 # -- --------------------------------------------------------------------------------------------------- -- #
 """
+import plotly.express as px
+
+def exchanges_graph(df):
+    
+    fig = px.line(df, x="datetime", y="mid_price", color='exchange')
+    fig.show()

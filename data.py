@@ -25,6 +25,7 @@ async def async_client(exchange_id, run_time: int, symbol: str):
             ask_volume = sum([ask[1] for ask in orderbook['asks']]) if len (orderbook['asks']) > 0 else None # Get the total ask volume
             total_volume = bid_volume + ask_volume
 
+            
             mid_price = (bid+ask)/2
             spread = np.round(ask - bid, 4)
             # Final data format for the results
@@ -32,11 +33,13 @@ async def async_client(exchange_id, run_time: int, symbol: str):
                 {
                     "exchange": exchange_id,
                     "datetime": datetime,
+                    "level": len(orderbook['asks']),
                     "bid_volume": bid_volume,
                     "ask_volume": ask_volume,
                     "total_volume": total_volume,
                     "mid_price": mid_price,
-                    "VWAP": 1,
+                    "spread": spread,
+                    "Symbol": symbol, #placeholder
                     
                     #"orderbook": {
                      #   "ask_size": ask_size.tolist(),
@@ -87,10 +90,14 @@ async def multi_orderbooks(exchanges, run_time: int, symbol: str):
 #
 #     return(data)
      
-async def orderbooks_df(exchanges:list):
-    exchanges = ["kucoin", "bittrex", "bitfinex", "poloniex", "huobipro"]
+async def orderbooks_df(exchanges:list, symbol:str):
+    exchanges = ["kucoin", "bittrex", "bitfinex"]
     run_time = 10  # seconds
-    symbol = "ETH/BTC"
+    #symbol = "BTC/USDT"
+
+    #symbol = "ETH/EUR"
+    
+    
     data = asyncio.run(multi_orderbooks(exchanges, run_time=run_time, symbol=symbol))
     data = [item for sublist in data for item in sublist]
     data = pd.DataFrame(data)
