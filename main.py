@@ -22,8 +22,8 @@ async def get_orderbooks(exchanges, run_time, symbol):
     return data
 
 exchanges = ["kucoin", "bittrex", "bitfinex"]
-#runt_time = 3600
-run_time = 10
+runt_time = 3600
+#run_time = 10
 
 symbol = 'BTC/USDT'
 
