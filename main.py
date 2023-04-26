@@ -11,28 +11,45 @@
 
 import asyncio
 import nest_asyncio
+import pandas as pd
 nest_asyncio.apply()
 
 from data import orderbooks_df
-
+ 
 
 async def get_orderbooks(exchanges, run_time, symbol):
-    #data = await (orderbooks_df(exchanges=exchanges, run_time=run_time, symbol=symbol))
     data = await (orderbooks_df(exchanges=exchanges, symbol=symbol))
     return data
 
 exchanges = ["kucoin", "bittrex", "bitfinex"]
-runt_time = 3600
-#run_time = 10
+run_time = 100000000000000000000000000000000000000000
 
-symbol = 'BTC/USDT'
+symbol1 = 'BTC/USDT'
 
-ETH_BTC = asyncio.run(get_orderbooks(exchanges, run_time, symbol))
-ETH_BTC.to_json('files\orderbooks_23abr2023_BTCUSDT.json')
+control = 0
+cc=0
 
-symbol = 'ETH/EUR'
-ETH_BTC = asyncio.run(get_orderbooks(exchanges, run_time, symbol))
-ETH_BTC.to_json('files\orderbooks_23abr2023_ETHEUR.json')
+while (control==0):
+    
+    ETH_BTC1 = asyncio.run(get_orderbooks(exchanges, run_time, symbol1))
+    
+    if(cc==0):
+        inicial = ETH_BTC1
+    
+    if(cc==1):
+        historial = pd.concat([inicial, ETH_BTC1], axis=0)
+    
+    if(cc>=2):
+        historial = pd.concat([historial, ETH_BTC1], axis=0)
+        historial.reset_index(drop=True, inplace=True)
+        historial.to_json('files\orderbooks_26abr2023_BTCUSDT.json')
+        
+    cc+=1
 
-print(ETH_BTC.info())
+
+#symbol2 = 'ETH/EUR'
+#ETH_BTC2 = asyncio.run(get_orderbooks(exchanges, run_time, symbol2))
+#ETH_BTC2.to_json('files\orderbooks_26abr2023_ETHEUR.json')
+
+#print(ETH_BTC.info())
 
