@@ -42,10 +42,12 @@ cc=0
 #    if(cc>=2):
 #        historial = pd.concat([historial, ETH_BTC1], axis=0)
 #        historial.reset_index(drop=True, inplace=True)
-#        historial.to_json('files\orderbooks_26abr2023_BTCUSDT.json')
+#        
         
 #    cc+=1
 
+#historial.to_csv('files\orderbooks_27abr2023_BTCUSDT.csv') 
+#historial.to_json('files\orderbooks_27abr2023_BTCUSDT.json')
 
 symbol1 = 'ETH/EUR'
 
@@ -65,8 +67,8 @@ while (control==0):
                 
     cc+=1
 
-#historial.to_json('files\orderbooks_26abr2023_ETHEUR.json')
-#historial.to_csv('files\orderbooks_26abr2023_ETHEUR.csv')    
+#historial.to_json('files\orderbooks_27abr2023_ETHEUR.json')
+#historial.to_csv('files\orderbooks_27abr2023_ETHEUR.csv')    
 
 
 
