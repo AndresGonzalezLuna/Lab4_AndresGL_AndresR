@@ -1,4 +1,6 @@
 import asyncio
+import nest_asyncio
+nest_asyncio.apply()
 import ccxt.async_support as ccxta
 import time
 import numpy as np
@@ -16,7 +18,7 @@ async def async_client(exchange_id, run_time: int, symbol: str):
             await exchange.load_markets()
             market = exchange.market(symbol)
             orderbook = await exchange.fetch_order_book(market["symbol"])
-            ohlc = await exchange.fetch_olhcv(symbol=market['symbol'], timeframe='1m')
+            ohlc = await exchange.fetch_ohlcv(symbol=market['symbol'], timeframe='1m')
             datetime = exchange.iso8601(exchange.milliseconds())
             # Unpack values
             bid = orderbook['bids'][0][0] if len (orderbook['bids']) > 0 else None # Get the highest bid
