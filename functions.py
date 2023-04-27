@@ -48,7 +48,7 @@ def rolls(df):
         df4.set_index('datetime', inplace=True)
         
         # calculate the returns and lag them by one time period
-        df4['returns'] = np.log(df4['mid_price']).diff()
+        df4['returns'] = np.log(df4['close_price']).diff()
         
         #Arreglar el shift para que sea de 1 minuto
         df4['lagged_returns'] = df4['returns'].shift(1)

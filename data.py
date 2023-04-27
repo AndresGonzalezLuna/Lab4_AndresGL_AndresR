@@ -16,6 +16,7 @@ async def async_client(exchange_id, run_time: int, symbol: str):
             await exchange.load_markets()
             market = exchange.market(symbol)
             orderbook = await exchange.fetch_order_book(market["symbol"])
+            ohlc = await exchange.fetch_olhcv(symbol=market['symbol'], timeframe='1m')
             datetime = exchange.iso8601(exchange.milliseconds())
             # Unpack values
             bid = orderbook['bids'][0][0] if len (orderbook['bids']) > 0 else None # Get the highest bid
@@ -39,6 +40,7 @@ async def async_client(exchange_id, run_time: int, symbol: str):
                     "total_volume": total_volume,
                     "mid_price": mid_price,
                     "spread": spread,
+                    "close_price": ohlc[0][4],
                     "Symbol": symbol, #placeholder
                     
                     #"orderbook": {
