@@ -9,43 +9,61 @@
 # -- --------------------------------------------------------------------------------------------------- -- #
 """
 import numpy as np
+import pandas as pd
 
 def vwap(df):
     
-    df['Price*Volume'] = df['mid_price'] * df['total_volume']
-
-    # Calculate the cumulative sum of Price*Volume and Volume
-    df['Cumulative Price*Volume'] = df['Price*Volume'].cumsum()
-    df['Cumulative Volume'] = df['total_volume'].cumsum()
+    dfs = []
     
-    # Calculate VWAP
-    df['VWAP'] = df['Cumulative Price*Volume'] / df['Cumulative Volume']
+    for exchange in list(df['exchange'].unique()):
     
-    df = df.drop(['Price*Volume', 'Cumulative Price*Volume', 'Cumulative Volume'], axis=1)
+        df4 = df[df['exchange'] == exchange].copy()
+    
+        df4['Price*Volume'] = df4['mid_price'] * df4['total_volume']
+    
+        # Calculate the cumulative sum of Price*Volume and Volume
+        df4['Cumulative Price*Volume'] = df4['Price*Volume'].cumsum()
+        df4['Cumulative Volume'] = df4['total_volume'].cumsum()
+        
+        # Calculate VWAP
+        df4['VWAP'] = df4['Cumulative Price*Volume'] / df4['Cumulative Volume']
+        
+        df4 = df4.drop(['Price*Volume', 'Cumulative Price*Volume', 'Cumulative Volume'], axis=1)
+        
+        dfs.append(df4)
     
     #df = df[df.columns[:-3]]
     
-    return df
+    return pd.concat(dfs, ignore_index=True)
 
 def rolls(df):
     
-    df.set_index('datetime', inplace=True)
     
-    # calculate the returns and lag them by one time period
-    df['returns'] = np.log(df['mid_price']).diff()
+    dfs = []
     
-    #Arreglar el shift para que sea de 1 minuto
-    df['lagged_returns'] = df['returns'].shift(1)
-    
-    # calculate the covariance matrix of the returns and lagged returns
-    cov_matrix = np.cov(df[['returns', 'lagged_returns']].dropna().T)
-    
-    # calculate Roll's spread
-    roll_spread = np.sqrt(cov_matrix[0, 0])
-    
-    # apply Roll's spread to the timeseries
-    df['roll_spread'] = roll_spread*2
-    
-    df = df.drop(['returns', 'lagged_returns', 'Price*Volume', 'Cumulative Price*Volume', 'Cumulative Volume'], axis=1)
-    
-    return df
+    for exchange in list(df['exchange'].unique()):
+        
+        df4 = df[df['exchange'] == exchange].copy()
+
+        df4.set_index('datetime', inplace=True)
+        
+        # calculate the returns and lag them by one time period
+        df4['returns'] = np.log(df4['mid_price']).diff()
+        
+        #Arreglar el shift para que sea de 1 minuto
+        df4['lagged_returns'] = df4['returns'].shift(1)
+        
+        # calculate the covariance matrix of the returns and lagged returns
+        cov_matrix = np.cov(df4[['returns', 'lagged_returns']].dropna().T)
+        
+        # calculate Roll's spread
+        roll_spread = np.sqrt(cov_matrix[0, 0])
+        
+        # apply Roll's spread to the timeseries
+        df4['roll_spread'] = roll_spread*2
+        
+        df4 = df4.drop(['returns', 'lagged_returns'], axis=1)
+        
+        dfs.append(df4)
+        
+    return pd.concat(dfs, ignore_index=True)
