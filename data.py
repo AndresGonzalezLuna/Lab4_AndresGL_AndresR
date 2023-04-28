@@ -5,7 +5,7 @@ import ccxt.async_support as ccxta
 import time
 import numpy as np
 import pandas as pd
-
+ 
 
 async def async_client(exchange_id, run_time: int, symbol: str):
     orderbook = None
